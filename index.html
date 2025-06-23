@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptitude Test - Cognitive Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .test-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: none;
+        }
+
+        .timer.warning {
+            background: rgba(255,0,0,0.8);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* Registration Screen Styles */
+        .registration-screen {
+            text-align: center;
+        }
+
+        .registration-form {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .registration-form h3 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.4em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group input.error {
+            border-color: #dc3545;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .user-info {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .start-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .start-description {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .start-description h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .start-description ul {
+            text-align: left;
+            color: #666;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .start-description li {
+            margin-bottom: 8px;
+        }
+
+        .question-container {
+            display: none;
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-text {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .question-category {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            transition: left 0.5s;
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.2);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+        }
+
+        .option-label {
+            font-weight: 600;
+            margin-right: 20px;
+            min-width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+        }
+
+        .option.selected .option-label {
+            background: white;
+            color: #667eea;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 35px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results-header {
+            margin-bottom: 40px;
+        }
+
+        .results-header h2 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .results-subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .score-overview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .main-score {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .score-label {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .score-description {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .detailed-scores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .category-score {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+        }
+
+        .category-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .category-percentage {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .category-fraction {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .performance-analysis {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .performance-analysis h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .strength-weakness {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .strength-list, .weakness-list {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .weakness-list {
+            border-left-color: #dc3545;
+        }
+
+        .strength-list h4, .weakness-list h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .strength-list ul, .weakness-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .strength-list li, .weakness-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .strength-list li:last-child, .weakness-list li:last-child {
+            border-bottom: none;
+        }
+
+        .recommendations {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: left;
+        }
+
+        .recommendations h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .recommendation-item {
+            background: rgba(255,255,255,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .recommendation-item:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .test-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .question-card {
+                padding: 25px;
+            }
+            
+            .strength-weakness {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer {
+                position: static;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Aptitude Test</h1>
+            <p>Comprehensive Cognitive Assessment</p>
+            <div class="test-info">
+                <div class="info-item">📊 20 Questions</div>
+                <div class="info-item">⏰ 20 Minutes</div>
+                <div class="info-item">🎯 4 Categories</div>
+            </div>
+            <div class="user-info" id="user-info" style="display: none;">
+                <!-- User info will be displayed here -->
+            </div>
+            <div class="timer" id="timer">
+                ⏰ Time: <span id="time-display">20:00</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Registration Screen -->
+            <div id="registration-screen" class="registration-screen">
+                <div class="registration-form">
+                    <h3>👤 Registration Required</h3>
+                    <form id="registration-form">
+                        <div class="form-group">
+                            <label for="user-name">Full Name</label>
+                            <input type="text" id="user-name" name="name" required>
+                            <div class="error-message" id="name-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-email">Email Address</label>
+                            <input type="email" id="user-email" name="email" required>
+                            <div class="error-message" id="email-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-phone">Phone Number</label>
+                            <input type="tel" id="user-phone" name="phone" required>
+                            <div class="error-message" id="phone-error"></div>
+                        </div>
+                    </form>
+                </div>
+                <button class="btn" onclick="registerUser()" id="register-btn">
+                    📝 Register & Continue
+                </button>
+            </div>
+
+            <!-- Start Screen -->
+            <div id="start-screen" class="start-screen">
+                <div class="start-description">
+                    <h3>📋 Test Instructions</h3>
+                    <ul>
+                        <li><strong>Duration:</strong> 20 minutes for 20 questions</li>
+                        <li><strong>Categories:</strong> Numerical, Logical, Verbal, and Spatial reasoning</li>
+                        <li><strong>Format:</strong> Multiple choice questions with 4 options each</li>
+                        <li><strong>Scoring:</strong> Each correct answer = 5 points (Total: 100 points)</li>
+                        <li><strong>Navigation:</strong> You can go back and change answers before submitting</li>
+                        <li><strong>Timer:</strong> Test will auto-submit when time expires</li>
+                    </ul>
+                </div>
+                <button class="btn" onclick="startTest()">🚀 Start Test</button>
+            </div>
+
+            <!-- Question Container -->
+            <div id="question-container" class="question-container">
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span class="progress-text" id="progress-text">Question 1 of 20</span>
+                        <span class="progress-text" id="answered-count">0 answered</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="question-card">
+                    <div class="question-meta">
+                        <div class="question-number" id="question-number">Question 1</div>
+                        <div class="question-category" id="question-category">Numerical</div>
+                    </div>
+                    <div class="question-text" id="question-text"></div>
+                    <div class="options" id="options"></div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prev-btn" onclick="previousQuestion()" disabled>← Previous</button>
+                    <button class="btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div id="results" class="results">
+                <div class="results-header">
+                    <h2>🎉 Test Results</h2>
+                    <p class="results-subtitle">Your cognitive assessment is complete</p>
+                </div>
+
+                <div class="score-overview" id="score-overview">
+                    <!-- Main score will be populated here -->
+                </div>
+
+                <div class="detailed-scores" id="detailed-scores">
+                    <!-- Category scores will be populated here -->
+                </div>
+
+                <div class="performance-analysis">
+                    <h3>📈 Performance Analysis</h3>
+                    <div class="strength-weakness" id="strength-weakness">
+                        <!-- Strengths and weaknesses will be populated here -->
+                    </div>
+                </div>
+
+                <div class="recommendations" id="recommendations">
+                    <h3>💡 Recommendations</h3>
+                    <div id="recommendations-content">
+                        <!-- Recommendations will be populated here -->
+                    </div>
+                </div>
+
+                <div class="navigation" style="justify-content: center; margin-top: 30px;">
+                    <button class="btn" onclick="resetTest()">🔄 Take Test Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let timeRemaining = 1200; // 20 minutes in seconds
+        let timerInterval;
+        let testStartTime;
+        let userData = {};
+
+        // Google Sheets configuration - REPLACE WITH YOUR ACTUAL VALUES
+        const GOOGLE_SHEETS_CONFIG = {
+            // You'll need to replace this with your actual Google Apps Script Web App URL
+            SCRIPT_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+            SHEET_ID: 'YOUR_SHEET_ID' // This is optional, can be handled in the script
+        };
+
+        const questions = [
+            {
+                question: "If 5 machines can produce 5 widgets in 5 minutes, how many machines are needed to produce 100 widgets in 100 minutes?",
+                options: ["5 machines", "10 machines", "20 machines", "100 machines"],
+                correct: 0,
+                category: "Numerical",
+                explanation: "Each machine produces 1 widget in 5 minutes, so each machine can produce 20 widgets in 100 minutes. To produce 100 widgets, you need 5 machines."
+            },
+            {
+                question: "Find the next number in the sequence: 2, 6, 12, 20, 30, ?",
+                options: ["40", "42", "45", "48"],
+                correct: 1,
+                category: "Logical",
+                explanation: "The differences are 4, 6, 8, 10... (increasing by 2 each time). Next difference is 12, so 30 + 12 = 42."
+            },
+            {
+                question: "If all Bloops are Razzles and all Razzles are Lazzles, then all Bloops are definitely:",
+                options: ["Lazzles", "Not Lazzles", "Sometimes Lazzles", "Cannot be determined"],
+                correct: 0,
+                category: "Logical",
+                explanation: "This is a syllogism. If A→B and B→C, then A→C. All Bloops are Lazzles."
+            },
+            {
+                question: "A cube has how many edges?",
+                options: ["6", "8", "10", "12"],
+                correct: 3,
+                category: "Spatial",
+                explanation: "A cube has 12 edges: 4 on top face, 4 on bottom face, and 4 connecting them vertically."
+            },
+            {
+                question: "Which word does NOT belong with the others?",
+                options: ["Dog", "Cat", "Bird", "Fish"],
+                correct: 2,
+                category: "Verbal",
+                explanation: "Bird is the only one that can fly naturally. All others are primarily land/water animals."
+            },
+            {
+                question: "If today is Monday, what day will it be 100 days from now?",
+                options: ["Monday", "Tuesday", "Wednesday", "Thursday"],
+                correct: 2,
+                category: "Numerical",
+                explanation: "100 ÷ 7 = 14 remainder 2. So 100 days = 14 weeks + 2 days. Monday + 2 days = Wednesday."
+            },
+            {
+                question: "Complete the analogy: Book is to Reading as Fork is to:",
+                options: ["Kitchen", "Eating", "Metal", "Spoon"],
+                correct: 1,
+                category: "Verbal",
+                explanation: "A book is used for reading, just as a fork is used for eating."
+            },
+            {
+                question: "What comes next in the pattern? ○ ◐ ● ◑ ?",
+                options: ["○", "◐", "●", "◑"],
+                correct: 0,
+                category: "Logical",
+                explanation: "The pattern shows moon phases: new, waxing, full, waning, then back to new (○)."
+            },
+            {
+                question: "If 3x + 7 = 22, what is the value of x?",
+                options: ["3", "5", "7", "9"],
+                correct: 1,
+                category: "Numerical",
+                explanation: "3x + 7 = 22, so 3x = 15, therefore x = 5."
+            },
+            {
+                question: "Which shape would complete the pattern? □ ○ △ □ ○ ?",
+                options: ["□", "○", "△", "◇"],
+                correct: 2,
+                category: "Spatial",
+                explanation: "The pattern repeats every 3 shapes: square, circle, triangle. The next shape is triangle."
+            },
+            {
+                question: "LIVED is to DEVIL as 6323 is to:",
+                options: ["3236", "2336", "3263", "3326"],
+                correct: 0,
+                category: "Logical",
+                explanation: "LIVED spelled backwards is DEVIL. 6323 backwards is 3236."
+            },
+            {
+                question: "A train travels 60 miles in 1.5 hours. What is its average speed in mph?",
+                options: ["30 mph", "40 mph", "45 mph", "50 mph"],
+                correct: 1,
+                category: "Numerical",
+                explanation: "Speed = Distance ÷ Time = 60 ÷ 1.5 = 40 mph."
+            },
+            {
+                question: "Which word is most similar in meaning to 'Elated'?",
+                options: ["Sad", "Angry", "Joyful", "Tired"],
+                correct: 2,
+                category: "Verbal",
+                explanation: "Elated means extremely happy or joyful."
+            },
+            {
+                question: "If you rearrange the letters of 'LISTEN', you can form:",
+                options: ["SILENT", "ENLIST", "TINSEL", "All of the above"],
+                correct: 3,
+                category: "Verbal",
+                explanation: "All three words use the same letters as LISTEN: SILENT, ENLIST, and TINSEL."
+            },
+            {
+                question: "In a group of 20 people, 12 like coffee, 8 like tea, and 3 like both. How many like neither?",
+                options: ["2", "3", "5", "7"],
+                correct: 1,
+                category: "Logical",
+                explanation: "Using Venn diagram: People who like only coffee = 12-3 = 9. Only tea = 8-3 = 5. Both = 3. Total who like at least one = 9+5+3 = 17. Neither = 20-17 = 3."
+            },
+            {
+                question: "What is 15% of 240?",
+                options: ["32", "36", "40", "45"],
+                correct: 1,
+                category: "Numerical",
+                explanation: "15% of 240 = 0.15 × 240 = 36."
+            },
+            {
+                question: "If a clock shows 3:15, what is the angle between the hour and minute hands?",
+                options: ["0°", "7.5°", "15°", "22.5°"],
+                correct: 1,
+                category: "Spatial",
+                explanation: "At 3:15, minute hand is at 3 (90°), hour hand moves 0.5° per minute, so it's at 90° + (15 × 0.5°) = 97.5°. Difference = 7.5°."
+            },
+            {
+                question: "Which number doesn't fit the pattern: 2, 3, 5, 7, 11, 12, 13?",
+                options: ["2", "11", "12", "13"],
+                correct: 2,
+                category: "Logical",
+                explanation: "All numbers except 12 are prime numbers. 12 = 2² × 3, so it's not prime."
+            },
+            {
+                question: "The opposite of 'GENEROUS' is:",
+                options: ["Stingy", "Kind", "Wealthy", "Happy"],
+                correct: 0,
+                category: "Verbal",
+                explanation: "Generous means giving freely; stingy means unwilling to spend or give."
+            },
+            {
+                question: "If a rectangle has length 12 and width 8, what is its perimeter?",
+                options: ["20", "32", "40", "96"],
+                correct: 2,
+                category: "Spatial",
+                explanation: "Perimeter = 2(length + width) = 2(12 + 8) = 2(20) = 40."
+            }
+        ];
+
+        // Registration Functions
+        function validateForm() {
+            let isValid = true;
+            
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-group input').forEach(el => el.classList.remove('error'));
+        
+        // Validate name
+        const name = document.getElementById('user-name').value.trim();
+        if (!name || name.length < 2) {
+            document.getElementById('name-error').textContent = 'Please enter a valid name (at least 2 characters)';
+            document.getElementById('user-name').classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate email
+        const email = document.getElementById('user-email').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            document.getElementById('email-error').textContent = 'Please enter a valid email address';
+            document.getElementById('user-email').classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate phone
+        const phone = document.getElementById('user-phone').value.trim();
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+        if (!phone || !phoneRegex.test(phone)) {
+            document.getElementById('phone-error').textContent = 'Please enter a valid phone number';
+            document.getElementById('user-phone').classList.add('error');
+            isValid = false;
+        }
+        
+        return isValid;
+    }
+
+    async function registerUser() {
+        if (!validateForm()) {
+            return;
+        }
+        
+        const registerBtn = document.getElementById('register-btn');
+        const originalText = registerBtn.innerHTML;
+        
+        // Show loading state
+        registerBtn.innerHTML = '<span class="loading"></span>Registering...';
+        registerBtn.disabled = true;
+        
+        // Collect user data
+        userData = {
+            name: document.getElementById('user-name').value.trim(),
+            email: document.getElementById('user-email').value.trim(),
+            phone: document.getElementById('user-phone').value.trim(),
+            registrationTime: new Date().toISOString()
+        };
+        
+        try {
+            // Send registration data to Google Sheets
+            await sendToGoogleSheets('registration', userData);
+            
+            // Show user info in header
+            document.getElementById('user-info').innerHTML = `
+                👤 ${userData.name} | 📧 ${userData.email}
+            `;
+            document.getElementById('user-info').style.display = 'block';
+            
+            // Hide registration screen and show start screen
+            document.getElementById('registration-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('Registration failed. Please try again.');
+            registerBtn.innerHTML = originalText;
+            registerBtn.disabled = false;
+        }
+    }
+
+    async function sendToGoogleSheets(type, data) {
+        // Replace this URL with your actual Google Apps Script Web App URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXai/exec';
+        
+        const payload = {
+            type: type,
+            data: data,
+            timestamp: new Date().toISOString()
+        };
+        
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+    }
+
+    function startTest() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('question-container').style.display = 'block';
+        document.getElementById('timer').style.display = 'block';
+        
+        // Initialize answers array
+        answers = new Array(questions.length).fill(null);
+        
+        // Start timer
+        testStartTime = new Date();
+        startTimer();
+        
+        // Load first question
+        loadQuestion(0);
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+            updateTimerDisplay();
+            
+            if (timeRemaining <= 300) { // 5 minutes remaining
+                document.getElementById('timer').classList.add('warning');
+            }
+            
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                submitTest();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        document.getElementById('time-display').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function loadQuestion(index) {
+        currentQuestionIndex = index;
+        const question = questions[index];
+        
+        // Update progress
+        document.getElementById('progress-text').textContent = `Question ${index + 1} of ${questions.length}`;
+        document.getElementById('progress-fill').style.width = `${((index + 1) / questions.length) * 100}%`;
+        
+        // Count answered questions
+        const answeredCount = answers.filter(answer => answer !== null).length;
+        document.getElementById('answered-count').textContent = `${answeredCount} answered`;
+        
+        // Update question content
+        document.getElementById('question-number').textContent = `Question ${index + 1}`;
+        document.getElementById('question-category').textContent = question.category;
+        document.getElementById('question-text').textContent = question.question;
+        
+        // Create options
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+        
+        question.options.forEach((option, optionIndex) => {
+            const optionElement = document.createElement('div');
+            optionElement.className = 'option';
+            optionElement.onclick = () => selectOption(optionIndex);
+            
+            if (answers[index] === optionIndex) {
+                optionElement.classList.add('selected');
+            }
+            
+            optionElement.innerHTML = `
+                <div class="option-label">${String.fromCharCode(65 + optionIndex)}</div>
+                <div class="option-text">${option}</div>
+            `;
+            
+            optionsContainer.appendChild(optionElement);
+        });
+        
+        // Update navigation buttons
+        document.getElementById('prev-btn').disabled = index === 0;
+        document.getElementById('next-btn').textContent = index === questions.length - 1 ? 'Submit Test' : 'Next →';
+    }
+
+    function selectOption(optionIndex) {
+        answers[currentQuestionIndex] = optionIndex;
+        
+        // Update visual selection
+        document.querySelectorAll('.option').forEach((option, index) => {
+            option.classList.toggle('selected', index === optionIndex);
+        });
+        
+        // Update answered count
+        const answeredCount = answers.filter(answer => answer !== null).length;
+        document.getElementById('answered-count').textContent = `${answeredCount} answered`;
+    }
+
+    function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+            loadQuestion(currentQuestionIndex - 1);
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex === questions.length - 1) {
+            submitTest();
+        } else {
+            loadQuestion(currentQuestionIndex + 1);
+        }
+    }
+
+    async function submitTest() {
+        clearInterval(timerInterval);
+        
+        const testEndTime = new Date();
+        const timeTaken = Math.round((testEndTime - testStartTime) / 1000); // in seconds
+        
+        // Calculate scores
+        const results = calculateResults();
+        
+        // Prepare test data for Google Sheets
+        const testData = {
+            ...userData,
+            testStartTime: testStartTime.toISOString(),
+            testEndTime: testEndTime.toISOString(),
+            timeTaken: timeTaken,
+            totalScore: results.totalScore,
+            percentage: results.percentage,
+            categoryScores: results.categoryScores,
+            answers: answers,
+            correctAnswers: questions.map(q => q.correct),
+            detailedAnswers: answers.map((answer, index) => ({
+                questionIndex: index,
+                question: questions[index].question,
+                selectedAnswer: answer !== null ? questions[index].options[answer] : 'Not answered',
+                correctAnswer: questions[index].options[questions[index].correct],
+                isCorrect: answer === questions[index].correct,
+                category: questions[index].category
+            }))
+        };
+        
+        try {
+            // Send test results to Google Sheets
+            await sendToGoogleSheets('test_results', testData);
+        } catch (error) {
+            console.error('Error saving test results:', error);
+            // Continue to show results even if saving fails
+        }
+        
+        // Show results
+        showResults(results);
+    }
+
+    function calculateResults() {
+        let totalCorrect = 0;
+        const categoryStats = {};
+        
+        // Initialize category stats
+        const categories = [...new Set(questions.map(q => q.category))];
+        categories.forEach(category => {
+            categoryStats[category] = { correct: 0, total: 0 };
+        });
+        
+        // Calculate scores
+        questions.forEach((question, index) => {
+            const category = question.category;
+            categoryStats[category].total++;
+            
+            if (answers[index] === question.correct) {
+                totalCorrect++;
+                categoryStats[category].correct++;
+            }
+        });
+        
+        // Calculate category percentages
+        const categoryScores = {};
+        Object.keys(categoryStats).forEach(category => {
+            const stats = categoryStats[category];
+            categoryScores[category] = {
+                correct: stats.correct,
+                total: stats.total,
+                percentage: Math.round((stats.correct / stats.total) * 100)
+            };
+        });
+        
+        return {
+            totalScore: totalCorrect * 5, // 5 points per question
+            totalCorrect: totalCorrect,
+            totalQuestions: questions.length,
+            percentage: Math.round((totalCorrect / questions.length) * 100),
+            categoryScores: categoryScores
+        };
+    }
+
+    function showResults(results) {
+        document.getElementById('question-container').style.display = 'none';
+        document.getElementById('timer').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        
+        // Main score
+        const scoreOverview = document.getElementById('score-overview');
+        scoreOverview.innerHTML = `
+            <div class="main-score">${results.totalScore}</div>
+            <div class="score-label">out of 100 points</div>
+            <div class="score-description">${results.percentage}% - ${getPerformanceLevel(results.percentage)}</div>
+        `;
+        
+        // Category scores
+        const detailedScores = document.getElementById('detailed-scores');
+        detailedScores.innerHTML = '';
+        
+        Object.keys(results.categoryScores).forEach(category => {
+            const score = results.categoryScores[category];
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category-score';
+            categoryDiv.innerHTML = `
+                <div class="category-name">${category}</div>
+                <div class="category-percentage">${score.percentage}%</div>
+                <div class="category-fraction">${score.correct}/${score.total} correct</div>
+            `;
+            detailedScores.appendChild(categoryDiv);
+        });
+        
+        // Performance analysis
+        const analysis = generatePerformanceAnalysis(results);
+        document.getElementById('strength-weakness').innerHTML = `
+            <div class="strength-list">
+                <h4>🎯 Strengths</h4>
+                <ul>
+                    ${analysis.strengths.map(strength => `<li>${strength}</li>`).join('')}
+                </ul>
+            </div>
+            <div class="weakness-list">
+                <h4>📈 Areas for Improvement</h4>
+                <ul>
+                    ${analysis.weaknesses.map(weakness => `<li>${weakness}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+        
+        // Recommendations
+        const recommendations = generateRecommendations(results);
+        document.getElementById('recommendations-content').innerHTML = recommendations
+            .map(rec => `<div class="recommendation-item">${rec}</div>`).join('');
+    }
+
+    function getPerformanceLevel(percentage) {
+        if (percentage >= 90) return 'Excellent Performance';
+        if (percentage >= 80) return 'Very Good Performance';
+        if (percentage >= 70) return 'Good Performance';
+        if (percentage >= 60) return 'Average Performance';
+        if (percentage >= 50) return 'Below Average Performance';
+        return 'Needs Improvement';
+    }
+
+    function generatePerformanceAnalysis(results) {
+        const strengths = [];
+        const weaknesses = [];
+        
+        Object.keys(results.categoryScores).forEach(category => {
+            const score = results.categoryScores[category];
+            if (score.percentage >= 70) {
+                strengths.push(`Strong ${category.toLowerCase()} reasoning abilities`);
+            } else if (score.percentage < 50) {
+                weaknesses.push(`${category} reasoning needs improvement`);
+            }
+        });
+        
+        if (results.percentage >= 80) {
+            strengths.push('Excellent overall cognitive performance');
+        }
+        
+        if (strengths.length === 0) {
+            strengths.push('Consistent performance across all areas');
+        }
+        
+        if (weaknesses.length === 0) {
+            weaknesses.push('No significant weaknesses identified');
+        }
+        
+        return { strengths, weaknesses };
+    }
+
+    function generateRecommendations(results) {
+        const recommendations = [];
+        
+        Object.keys(results.categoryScores).forEach(category => {
+            const score = results.categoryScores[category];
+            if (score.percentage < 60) {
+                switch (category) {
+                    case 'Numerical':
+                        recommendations.push('📊 Practice mathematical reasoning and number sequences. Consider reviewing basic arithmetic and algebra.');
+                        break;
+                    case 'Logical':
+                        recommendations.push('🧩 Work on logical puzzles, pattern recognition, and deductive reasoning exercises.');
+                        break;
+                    case 'Verbal':
+                        recommendations.push('📚 Expand vocabulary through reading and practice synonym/antonym exercises.');
+                        break;
+                    case 'Spatial':
+                        recommendations.push('🎯 Practice spatial reasoning with 3D puzzles and geometric visualization exercises.');
+                        break;
+                }
+            }
+        });
+        
+        if (results.percentage >= 80) {
+            recommendations.push('🌟 Excellent performance! Continue challenging yourself with advanced cognitive exercises.');
+        } else if (results.percentage >= 60) {
+            recommendations.push('👍 Good foundation! Focus on areas needing improvement while maintaining your strengths.');
+        } else {
+            recommendations.push('📈 Consider systematic practice in all areas. Start with fundamentals and gradually increase difficulty.');
+        }
+        
+        return recommendations;
+    }
+
+    function resetTest() {
+        // Reset all variables
+        currentQuestionIndex = 0;
+        answers = [];
+        timeRemaining = 1200;
+        userData = {};
+        
+        // Clear timer
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
+        // Reset UI
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('registration-screen').style.display = 'block';
+        document.getElementById('user-info').style.display = 'none';
+        document.getElementById('timer').classList.remove('warning');
+        
+        // Clear form
+        document.getElementById('registration-form').reset();
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-group input').forEach(el => el.classList.remove('error'));
+    }
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show registration screen by default
+        document.getElementById('registration-screen').style.display = 'block';
+        
+        // Add enter key support for registration form
+        document.getElementById('registration-form').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                registerUser();
+            }
+        });
+    });
+
+    // Handle page visibility change (prevent cheating)
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && timerInterval) {
+            // User switched tabs during test - you might want to handle this
+            console.log('User switched tabs during test');
+        }
+    });
+
+    // Prevent right-click context menu during test
+    document.addEventListener('contextmenu', function(e) {
+        if (document.getElementById('question-container').style.display !== 'none') {
+            e.preventDefault();
+        }
+    });
+    </script>
+</body>
+</html>
